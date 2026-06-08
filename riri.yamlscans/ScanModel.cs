@@ -143,6 +143,9 @@ public class ScanModel(List<ScanEntry> entries)
     private const string ResultSettingTag = "_RESULT";
     private const string DisabledScanValue = "DISABLED";
 
+    private const string SignatureTag = "signatures";
+    private const string TransformTag = "transforms";
+
     private static ITransform TransformFromString(string value)
     => value switch
         {
@@ -154,6 +157,39 @@ public class ScanModel(List<ScanEntry> entries)
             "GetIndirectAddressLong4" => new GetIndirectAddressLong4(),
             _ => new CustomExpression(value)
         };
+
+    private static void CreateScalarSignature(string key, string scalar, ref Dictionary<string, ScanEntry> scanEntries)
+    {
+        if (scalar != DisabledScanValue)
+            scanEntries.Add(key, new(key, [new(scalar, new GetDirectAddress())]));
+    }
+
+    private static void SetSignatureTransformer(KeyValuePair<YamlNode, YamlNode> mapping, ScanEntry scanEntry)
+    {
+        switch (mapping.Value.NodeType)
+        {
+            case YamlNodeType.Scalar:
+                scanEntry.Candidates[0].Transformer = TransformFromString(
+                    mapping.Value.Cast<YamlScalarNode>()?.Value ?? throw new Exception("Transform entry must be a string"));
+                break;
+            case YamlNodeType.Sequence:
+                var sequence = mapping.Value.Cast<YamlSequenceNode>();
+                if (scanEntry.Candidates.Count != sequence.Children.Count)
+                {
+                    throw new Exception(
+                        $"Signature transform list should be the same length as the signature list (got {sequence.Children.Count} transforms when we expected {scanEntry.Candidates.Count})");                           
+                }
+
+                foreach (var (candidate, transform) in scanEntry.Candidates.Zip(sequence.Children))
+                    candidate.Transformer = TransformFromString(transform.Cast<YamlScalarNode>()?.Value ??
+                                                                throw new Exception(
+                                                                    "Transform entry must be a string"));
+                break;
+            default:
+                throw new Exception(
+                    $"Unexpected formatting for signature transform: Detected YAML node type {mapping.Value.NodeType}");
+        }   
+    }
     
     public static ScanModel? FromString(string yaml)
     {
@@ -162,6 +198,49 @@ public class ScanModel(List<ScanEntry> entries)
         var root = reader.Documents[0].RootNode.Cast<YamlSequenceNode>() 
                    ?? throw new Exception("Expected a sequence at the top-level");
         Dictionary<string, ScanEntry> scanEntries = new();
+
+        void AddSignatureSequence(string key, YamlSequenceNode sequence)
+        {
+            scanEntries.Add(key, new (key, sequence.Children.Select(x =>
+                new Candidate(x.Cast<YamlScalarNode>()?.Value ?? 
+                              throw new Exception("Signature entries are expected to be strings"), 
+                    new GetDirectAddress()) 
+            ).ToList()));
+        };
+        
+        void AddScanYAMLSignature(string key, YamlSequenceNode sequence)
+        {
+            foreach (var child in sequence.Children)
+            {
+                var sigField = child.GetMapping().Value;
+                var sigKey = sigField.Key.Cast<YamlScalarNode>()?.Value ??
+                    throw new Exception("Signature field key is expected to be a string");
+                switch (sigKey)
+                {
+                    case SignatureTag:
+                        switch (sigField.Value.NodeType)
+                        {
+                            case YamlNodeType.Scalar:
+                                CreateScalarSignature(key, sigField.Value.Cast<YamlScalarNode>()?.Value!, ref scanEntries);
+                                break;
+                            case YamlNodeType.Sequence:
+                                AddSignatureSequence(key, sigField.Value.Cast<YamlSequenceNode>());
+                                break;
+                            default:
+                                throw new Exception($"Value for signature field should be a string or list of strings. Got YAML node type {sigField.Value.NodeType} instead.");
+                        }
+                        break;
+                    case TransformTag:
+                        if (!scanEntries.TryGetValue(key, out var scanEntry))
+                            throw new Exception($"{key}'s signatures should be declared before their transformers");
+                        SetSignatureTransformer(sigField, scanEntry);
+                        break;
+                    default:
+                        throw new Exception($"Unexpected signature field key {sigKey}");
+                }
+            }
+        }
+        
         foreach (var node in root)
         {
             var mapping = node.GetMapping() ?? throw new Exception("Expected a mapping");
@@ -170,66 +249,27 @@ public class ScanModel(List<ScanEntry> entries)
             {
                 if (!scanEntries.TryGetValue(key[..^ResultSettingTag.Length], out var scanEntry))
                     throw new Exception($"{key[..^ResultSettingTag.Length]} should be declared before it's result transformer");
-                switch (mapping.Value.NodeType)
-                {
-                    case YamlNodeType.Scalar:
-                        scanEntry.Candidates[0].Transformer = TransformFromString(
-                            mapping.Value.Cast<YamlScalarNode>()?.Value ?? throw new Exception("Transform entry must be a string"));
-                        break;
-                    case YamlNodeType.Sequence:
-                        var sequence = mapping.Value.Cast<YamlSequenceNode>();
-                        if (scanEntry.Candidates.Count != sequence.Children.Count)
-                        {
-                            throw new Exception(
-                                $"Signature transform list should be the same length as the signature list (got {sequence.Children.Count} transforms when we expected {scanEntry.Candidates.Count})");                           
-                        }
-
-                        foreach (var (candidate, transform) in scanEntry.Candidates.Zip(sequence.Children))
-                            candidate.Transformer = TransformFromString(transform.Cast<YamlScalarNode>()?.Value ??
-                                                                        throw new Exception(
-                                                                            "Transform entry must be a string"));
-                        break;
-                    default:
-                        throw new Exception(
-                            $"Unexpected formatting for signature transform: Detected YAML node type {mapping.Value.NodeType}");
-                }
+                SetSignatureTransformer(mapping, scanEntry);
             }
             else
             {
                 switch (mapping.Value.NodeType)
                 {
                     case YamlNodeType.Scalar:
-                        var scalar = mapping.Value.Cast<YamlScalarNode>()?.Value!;
-                        if (scalar != DisabledScanValue)
-                            scanEntries.Add(key, new(key, [new(scalar, new GetDirectAddress())]));
+                        CreateScalarSignature(key, mapping.Value.Cast<YamlScalarNode>()?.Value!, ref scanEntries);
                         break;
                     case YamlNodeType.Sequence:
                         var sequence = mapping.Value.Cast<YamlSequenceNode>();
-                        // Scan YAML format (mapping with inner signatures and transform fields
-                        /*
-                        if (sequence.Children.Count > 0 && sequence.Children[0].NodeType == YamlNodeType.Mapping)
-                        {
-                            var signatureMapping = sequence.Children[0].GetMapping() ?? throw new Exception("Expected a mapping");
-                            Console.WriteLine(signatureMapping.Key);
-                            Console.WriteLine(signatureMapping.Value);
-                        }
-                        // Scan INI format
+                        if (sequence.Children.Select(x => x.NodeType == YamlNodeType.Mapping).All(x => x))
+                            AddScanYAMLSignature(key, sequence); // Scan YAML format
                         else
-                        */
-                        {
-                            scanEntries.Add(key, new (key, sequence.Children.Select(x =>
-                                new Candidate(x.Cast<YamlScalarNode>()?.Value ?? 
-                                              throw new Exception("Signature entries are expected to be strings"), 
-                                    new GetDirectAddress()) 
-                            ).ToList()));   
-                        }
+                            AddSignatureSequence(key, sequence); // Scan INI format
                         break;
                     default:
                         throw new Exception(
                             $"Unexpected formatting for signatures: Detected YAML node type {mapping.Value.NodeType}");
                 }
             }
-            Console.WriteLine($"{mapping.Key} = {mapping.Value}");
         }
         return new ScanModel(scanEntries.Values.ToList());
     }
