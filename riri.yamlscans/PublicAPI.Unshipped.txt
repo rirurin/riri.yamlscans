@@ -1,0 +1,67 @@
+﻿#nullable enable
+abstract riri.yamlscans.GetIndirectAddress.Amount.get -> int
+override abstract riri.yamlscans.GetIndirectAddress.GetHashCode() -> int
+override riri.yamlscans.Candidate.ToString() -> string!
+override riri.yamlscans.CustomExpression.Equals(object? obj) -> bool
+override riri.yamlscans.CustomExpression.GetHashCode() -> int
+override riri.yamlscans.GetDirectAddress.Equals(object? obj) -> bool
+override riri.yamlscans.GetDirectAddress.GetHashCode() -> int
+override riri.yamlscans.GetDirectAddressAbsolute.Equals(object? obj) -> bool
+override riri.yamlscans.GetDirectAddressAbsolute.GetHashCode() -> int
+override riri.yamlscans.GetIndirectAddress.Equals(object? obj) -> bool
+override riri.yamlscans.GetIndirectAddressLong.Amount.get -> int
+override riri.yamlscans.GetIndirectAddressLong.GetHashCode() -> int
+override riri.yamlscans.GetIndirectAddressLong4.Amount.get -> int
+override riri.yamlscans.GetIndirectAddressLong4.GetHashCode() -> int
+override riri.yamlscans.GetIndirectAddressShort.Amount.get -> int
+override riri.yamlscans.GetIndirectAddressShort.GetHashCode() -> int
+override riri.yamlscans.GetIndirectAddressShort2.Amount.get -> int
+override riri.yamlscans.GetIndirectAddressShort2.GetHashCode() -> int
+override riri.yamlscans.ScanEntry.ToString() -> string!
+riri.yamlscans.Candidate
+riri.yamlscans.Candidate.Candidate(string! signature, riri.yamlscans.ITransform! transformer) -> void
+riri.yamlscans.Candidate.Signature.get -> string!
+riri.yamlscans.Candidate.Transformer.get -> riri.yamlscans.ITransform!
+riri.yamlscans.Candidate.Transformer.set -> void
+riri.yamlscans.CustomExpression
+riri.yamlscans.CustomExpression.CustomExpression(string! expr) -> void
+riri.yamlscans.CustomExpression.Transform(riri.yamlscans.TransformProviderAMD64! provider, nint ptr) -> nint
+riri.yamlscans.Extensions
+riri.yamlscans.GetDirectAddress
+riri.yamlscans.GetDirectAddress.GetDirectAddress() -> void
+riri.yamlscans.GetDirectAddress.Transform(riri.yamlscans.TransformProviderAMD64! provider, nint ptr) -> nint
+riri.yamlscans.GetDirectAddressAbsolute
+riri.yamlscans.GetDirectAddressAbsolute.GetDirectAddressAbsolute() -> void
+riri.yamlscans.GetDirectAddressAbsolute.Transform(riri.yamlscans.TransformProviderAMD64! provider, nint ptr) -> nint
+riri.yamlscans.GetIndirectAddress
+riri.yamlscans.GetIndirectAddress.GetIndirectAddress() -> void
+riri.yamlscans.GetIndirectAddress.Transform(riri.yamlscans.TransformProviderAMD64! provider, nint ptr) -> nint
+riri.yamlscans.GetIndirectAddressLong
+riri.yamlscans.GetIndirectAddressLong.GetIndirectAddressLong() -> void
+riri.yamlscans.GetIndirectAddressLong4
+riri.yamlscans.GetIndirectAddressLong4.GetIndirectAddressLong4() -> void
+riri.yamlscans.GetIndirectAddressShort
+riri.yamlscans.GetIndirectAddressShort.GetIndirectAddressShort() -> void
+riri.yamlscans.GetIndirectAddressShort2
+riri.yamlscans.GetIndirectAddressShort2.GetIndirectAddressShort2() -> void
+riri.yamlscans.ITransform
+riri.yamlscans.ITransform.Transform(riri.yamlscans.TransformProviderAMD64! provider, nint ptr) -> nint
+riri.yamlscans.ScanEntry
+riri.yamlscans.ScanEntry.Candidates.get -> System.Collections.Generic.List<riri.yamlscans.Candidate!>!
+riri.yamlscans.ScanEntry.Key.get -> string!
+riri.yamlscans.ScanEntry.ScanEntry(string! key, System.Collections.Generic.List<riri.yamlscans.Candidate!>! candidates) -> void
+riri.yamlscans.ScanModel
+riri.yamlscans.ScanModel.Entries.get -> System.Collections.Generic.List<riri.yamlscans.ScanEntry!>!
+riri.yamlscans.ScanModel.ScanModel(System.Collections.Generic.List<riri.yamlscans.ScanEntry!>! entries) -> void
+riri.yamlscans.ScanModel.ToDictionary() -> System.Collections.Generic.Dictionary<string!, System.Collections.Generic.List<riri.yamlscans.Candidate!>!>!
+riri.yamlscans.TransformProviderAMD64
+riri.yamlscans.TransformProviderAMD64.BaseAddress.get -> nint
+riri.yamlscans.TransformProviderAMD64.GetDirectAddress(nint ptr) -> nint
+riri.yamlscans.TransformProviderAMD64.GetGlobalAddress(nint ptr) -> nint
+riri.yamlscans.TransformProviderAMD64.TransformProviderAMD64(nint baseAddress) -> void
+riri.yamlscans.TransformProviderAMD64.TryDeref(nint ptr) -> nint
+static riri.yamlscans.Extensions.Cast<T>(this YamlDotNet.RepresentationModel.YamlNode! node) -> T?
+static riri.yamlscans.Extensions.GetMapping(this YamlDotNet.RepresentationModel.YamlNode! node) -> System.Collections.Generic.KeyValuePair<YamlDotNet.RepresentationModel.YamlNode!, YamlDotNet.RepresentationModel.YamlNode!>?
+static riri.yamlscans.ScanModel.FromNode(YamlDotNet.RepresentationModel.YamlSequenceNode! root) -> riri.yamlscans.ScanModel!
+static riri.yamlscans.ScanModel.FromPath(string! path) -> riri.yamlscans.ScanModel!
+static riri.yamlscans.ScanModel.FromString(string! yaml) -> riri.yamlscans.ScanModel!

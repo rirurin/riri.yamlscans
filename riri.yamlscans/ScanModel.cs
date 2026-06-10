@@ -3,67 +3,108 @@ using YamlDotNet.RepresentationModel;
 
 namespace riri.yamlscans;
 
+/// <inheritdoc/>
 public interface ITransform
 {
+    /// <inheritdoc/>
     nint Transform(TransformProviderAMD64 provider, nint ptr);
 }
 
 // GetDirectAddressRelative
+/// <inheritdoc/>
 public class GetDirectAddress : ITransform
 {
+    /// <inheritdoc/>
     public nint Transform(TransformProviderAMD64 provider, nint ptr)
         => provider.TryDeref(provider.GetDirectAddress(ptr));
-
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
         => obj is GetDirectAddress;
+
+    /// <inheritdoc/>
+    public override int GetHashCode()
+        => 0.GetHashCode();
 }
 
+/// <inheritdoc/>
 public class GetDirectAddressAbsolute : ITransform
 {
+    /// <inheritdoc/>
     public nint Transform(TransformProviderAMD64 provider, nint ptr)
         => provider.TryDeref(ptr);
-    
+
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
         => obj is GetDirectAddressAbsolute;
+    /// <inheritdoc/>
+    public override int GetHashCode()
+        => 1.GetHashCode();
 }
 
+/// <inheritdoc/>
 public abstract class GetIndirectAddress : ITransform
 {
+    /// <inheritdoc/>
     protected abstract int Amount { get; }
+    /// <inheritdoc/>
     public nint Transform(TransformProviderAMD64 provider, nint ptr)
         => provider.TryDeref(provider.GetGlobalAddress(provider.GetDirectAddress(ptr) + Amount));
-    
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
-        => obj.GetType() == GetType();
+        => obj != null && obj.GetType() == GetType();
+    /// <inheritdoc/>
+    public abstract override int GetHashCode();
 }
 
+/// <inheritdoc/>
 public class GetIndirectAddressShort : GetIndirectAddress
 {
+    /// <inheritdoc/>
     protected override int Amount => 1;
+    /// <inheritdoc/>
+    public override int GetHashCode()
+        => 2.GetHashCode();
 }
 
+/// <inheritdoc/>
 public class GetIndirectAddressShort2 : GetIndirectAddress
 {
+    /// <inheritdoc/>
     protected override int Amount => 2;
+    /// <inheritdoc/>
+    public override int GetHashCode()
+        => 3.GetHashCode();
 }
 
+/// <inheritdoc/>
 public class GetIndirectAddressLong : GetIndirectAddress
 {
+    /// <inheritdoc/>
     protected override int Amount => 3;
+    /// <inheritdoc/>
+    public override int GetHashCode()
+        => 4.GetHashCode();
 }
 
+/// <inheritdoc/>
 public class GetIndirectAddressLong4 : GetIndirectAddress
 {
+    /// <inheritdoc/>
     protected override int Amount => 4;
+    /// <inheritdoc/>
+    public override int GetHashCode()
+        => 5.GetHashCode();
 }
 
+/// <inheritdoc/>
 public class CustomExpression(string expr) : ITransform
 {
     private string Expr { get; } = expr;
 
     private static nint Res(ExpressionFunctionData p)
         => (nint)p[0].Evaluate()!;
-    
+
+    /// <inheritdoc/>
     public nint Transform(TransformProviderAMD64 provider, nint ptr)
     => (nint?)new Expression(Expr)
         {
@@ -79,13 +120,19 @@ public class CustomExpression(string expr) : ITransform
             }
         }.Evaluate() ?? throw new Exception("Error while trying to evaluate custom expression");
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
         => obj is CustomExpression expression && Expr.Equals(expression.Expr);
+
+    /// <inheritdoc/>
+    public override int GetHashCode()
+        => 6.GetHashCode();
 }
 
+/// <inheritdoc/>
 public class TransformProviderAMD64(nint baseAddress)
 {
-
+    /// <inheritdoc/>
     public nint BaseAddress { get; } = baseAddress;
     
     private unsafe nint DerefShort(nint ptr)
@@ -101,6 +148,7 @@ public class TransformProviderAMD64(nint baseAddress)
             _ => ptr
         };
 
+    /// <inheritdoc/>
     public unsafe nint TryDeref(nint ptr)
         => ((byte*)ptr)[0] switch
         {
@@ -110,34 +158,45 @@ public class TransformProviderAMD64(nint baseAddress)
             _ => ptr
         };
 
+    /// <inheritdoc/>
     public unsafe nint GetGlobalAddress(nint ptr)
         => *(int*)ptr + ptr + 4;
-    
+
+    /// <inheritdoc/>
     public nint GetDirectAddress(nint ptr)
         => BaseAddress + ptr;
 }
 
+/// <inheritdoc/>
 public class Candidate(string signature, ITransform transformer)
 {
+    /// <inheritdoc/>
     public string Signature { get; } = signature;
+    /// <inheritdoc/>
     public ITransform Transformer { get; set; } = transformer;
 
+    /// <inheritdoc/>
     public override string ToString()
         => $"(\"{Signature}\" => {Transformer.GetType().Name})";
 }
 
+/// <inheritdoc/>
 public class ScanEntry(string key, List<Candidate> candidates)
 {
+    /// <inheritdoc/>
     public string Key { get; } = key;
+    /// <inheritdoc/>
     public List<Candidate> Candidates { get; } = candidates;
 
+    /// <inheritdoc/>
     public override string ToString()
         => $"{Key} = [{string.Join(",", Candidates.Select(x => x.ToString()))}]";
 }
 
+/// <inheritdoc/>
 public class ScanModel(List<ScanEntry> entries)
 {
-
+    /// <inheritdoc/>
     public List<ScanEntry> Entries { get; } = entries;
     
     private const string ResultSettingTag = "_RESULT";
@@ -174,7 +233,7 @@ public class ScanModel(List<ScanEntry> entries)
                 break;
             case YamlNodeType.Sequence:
                 var sequence = mapping.Value.Cast<YamlSequenceNode>();
-                if (scanEntry.Candidates.Count != sequence.Children.Count)
+                if (scanEntry.Candidates.Count != sequence!.Children.Count)
                 {
                     throw new Exception(
                         $"Signature transform list should be the same length as the signature list (got {sequence.Children.Count} transforms when we expected {scanEntry.Candidates.Count})");                           
@@ -190,13 +249,10 @@ public class ScanModel(List<ScanEntry> entries)
                     $"Unexpected formatting for signature transform: Detected YAML node type {mapping.Value.NodeType}");
         }   
     }
-    
-    public static ScanModel? FromString(string yaml)
+
+    /// <inheritdoc/>
+    public static ScanModel FromNode(YamlSequenceNode root)
     {
-        var reader = new YamlStream();
-        reader.Load(new StringReader(yaml));
-        var root = reader.Documents[0].RootNode.Cast<YamlSequenceNode>() 
-                   ?? throw new Exception("Expected a sequence at the top-level");
         Dictionary<string, ScanEntry> scanEntries = new();
 
         void AddSignatureSequence(string key, YamlSequenceNode sequence)
@@ -212,7 +268,7 @@ public class ScanModel(List<ScanEntry> entries)
         {
             foreach (var child in sequence.Children)
             {
-                var sigField = child.GetMapping().Value;
+                var sigField = child!.GetMapping()!.Value;
                 var sigKey = sigField.Key.Cast<YamlScalarNode>()?.Value ??
                     throw new Exception("Signature field key is expected to be a string");
                 switch (sigKey)
@@ -224,7 +280,7 @@ public class ScanModel(List<ScanEntry> entries)
                                 CreateScalarSignature(key, sigField.Value.Cast<YamlScalarNode>()?.Value!, ref scanEntries);
                                 break;
                             case YamlNodeType.Sequence:
-                                AddSignatureSequence(key, sigField.Value.Cast<YamlSequenceNode>());
+                                AddSignatureSequence(key, sigField.Value.Cast<YamlSequenceNode>()!);
                                 break;
                             default:
                                 throw new Exception($"Value for signature field should be a string or list of strings. Got YAML node type {sigField.Value.NodeType} instead.");
@@ -260,7 +316,7 @@ public class ScanModel(List<ScanEntry> entries)
                         break;
                     case YamlNodeType.Sequence:
                         var sequence = mapping.Value.Cast<YamlSequenceNode>();
-                        if (sequence.Children.Select(x => x.NodeType == YamlNodeType.Mapping).All(x => x))
+                        if (sequence!.Children.Select(x => x.NodeType == YamlNodeType.Mapping).All(x => x))
                             AddScanYAMLSignature(key, sequence); // Scan YAML format
                         else
                             AddSignatureSequence(key, sequence); // Scan INI format
@@ -271,12 +327,24 @@ public class ScanModel(List<ScanEntry> entries)
                 }
             }
         }
-        return new ScanModel(scanEntries.Values.ToList());
+        return new ScanModel(scanEntries.Values.ToList());   
     }
-
-    public static ScanModel? FromPath(string path)
+    /// <inheritdoc/>
+    public static ScanModel FromString(string yaml)
+    {
+        var reader = new YamlStream();
+        reader.Load(new StringReader(yaml));
+        var root = reader.Documents[0].RootNode.Cast<YamlSequenceNode>() 
+                   ?? throw new Exception("Expected a sequence at the top-level");
+        return FromNode(root);
+    }
+    /// <inheritdoc/>
+    public static ScanModel FromPath(string path)
     {
         using var stream = new StreamReader(path);
         return FromString(stream.ReadToEnd());
     }
+    /// <inheritdoc/>
+    public Dictionary<string, List<Candidate>> ToDictionary()
+        => Entries.Select(x => (x.Key, x.Candidates)).ToDictionary();
 }
