@@ -62,6 +62,6 @@ riri.yamlscans.TransformProviderAMD64.TransformProviderAMD64(nint baseAddress) -
 riri.yamlscans.TransformProviderAMD64.TryDeref(nint ptr) -> nint
 static riri.yamlscans.Extensions.Cast<T>(this YamlDotNet.RepresentationModel.YamlNode! node) -> T?
 static riri.yamlscans.Extensions.GetMapping(this YamlDotNet.RepresentationModel.YamlNode! node) -> System.Collections.Generic.KeyValuePair<YamlDotNet.RepresentationModel.YamlNode!, YamlDotNet.RepresentationModel.YamlNode!>?
-static riri.yamlscans.ScanModel.FromNode(YamlDotNet.RepresentationModel.YamlSequenceNode! root) -> riri.yamlscans.ScanModel!
+static riri.yamlscans.ScanModel.FromNode(YamlDotNet.RepresentationModel.YamlMappingNode! root) -> riri.yamlscans.ScanModel!
 static riri.yamlscans.ScanModel.FromPath(string! path) -> riri.yamlscans.ScanModel!
 static riri.yamlscans.ScanModel.FromString(string! yaml) -> riri.yamlscans.ScanModel!

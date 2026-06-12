@@ -8,3 +8,5 @@ riderModule.iml
 
 # Jetbrains IDE
 **/.idea/*
+# Visual Studio
+**/.vs/*

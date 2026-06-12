@@ -18,7 +18,7 @@ function Publish-Project {
     dotnet clean $project_name/$project_name.csproj
     dotnet build $project_name/$project_name.csproj -c Release -r win-x64 --self-contained false -o $PublishPath 
     Compress-Archive -Path (Get-ChildItem -Path $PublishPath* -Exclude "*.nupkg") -Force $PublishPath/Github/$project_name".zip"
-    Copy-Item -Path $PublishPath/* -Include "*.nupkg" -Destination $NugetReleasePath -Recurse
+    Copy-Item -Path $PublishPath/* -Include "*.nupkg" -Destination $PublishPath/Nuget -Recurse
 }
 
 New-Folder "$PublishPath/Github"
