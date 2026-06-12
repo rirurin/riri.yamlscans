@@ -64,8 +64,9 @@ jobs:
         files: |
           ${{ env.PUBLISH_PATH }}/Github/*
 
-    - name: Login to NuGet
+    - name: Login to NuGet (on Tag)
       uses: NuGet/login@v1
+      if: env.IS_RELEASE == 'true'
       id: login
       with:
         user: ${{ secrets.NUGET_USER }}
