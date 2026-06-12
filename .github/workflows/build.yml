@@ -64,19 +64,23 @@ jobs:
         files: |
           ${{ env.PUBLISH_PATH }}/Github/*
 
+    - name: Login to NuGet
+      uses: NuGet/login@v1
+      id: login
+      with:
+        user: ${{ secrets.NUGET_USER }}
+
     - name: Push to NuGet (on Tag)
-      env: 
-        NUGET_KEY: ${{ secrets.NUGET_KEY }}
       if: env.IS_RELEASE == 'true'
       run: |
-        if ([string]::IsNullOrEmpty("$env:NUGET_KEY"))
+        if ([string]::IsNullOrEmpty("${{ steps.login.outputs.NUGET_API_KEY }}"))
         {
-            Write-Host "NuGet Repository Key (GitHub Secrets -> NUGET_KEY) Not Specified. Skipping."
+            Write-Host "Could not retrieve the NuGuet key, skipping."
             return
         }
-        $items = Get-ChildItem -Path "$env:NUGET_RELEASE_PATH/*.nupkg"
+        $items = Get-ChildItem -Path "${{ env.PUBLISH_PATH }}/Nuget/*.nupkg"
         Foreach ($item in $items)
         {
             Write-Host "Pushing $item"
-            dotnet nuget push "$item" -k "$env:NUGET_KEY" -s "$env:NUGET_URL" --skip-duplicate
+            dotnet nuget push "$item" -k "${{ steps.login.outputs.NUGET_API_KEY }}" -s "${{ env.NUGET_URL }}" --skip-duplicate
         }
