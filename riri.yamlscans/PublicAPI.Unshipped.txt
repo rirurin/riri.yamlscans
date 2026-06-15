@@ -56,6 +56,7 @@ riri.yamlscans.ScanModel.ScanModel(System.Collections.Generic.List<riri.yamlscan
 riri.yamlscans.ScanModel.ToDictionary() -> System.Collections.Generic.Dictionary<string!, System.Collections.Generic.List<riri.yamlscans.Candidate!>!>!
 riri.yamlscans.TransformProviderAMD64
 riri.yamlscans.TransformProviderAMD64.BaseAddress.get -> nint
+riri.yamlscans.TransformProviderAMD64.DerefData(nint ptr) -> nint
 riri.yamlscans.TransformProviderAMD64.GetDirectAddress(nint ptr) -> nint
 riri.yamlscans.TransformProviderAMD64.GetGlobalAddress(nint ptr) -> nint
 riri.yamlscans.TransformProviderAMD64.TransformProviderAMD64(nint baseAddress) -> void

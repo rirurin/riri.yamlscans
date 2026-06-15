@@ -113,6 +113,7 @@ public class CustomExpression(string expr) : ITransform
             {
                 ["GetDirectAddress"] = p => provider.GetDirectAddress(Res(p)),
                 ["GetGlobalAddress"] = p => provider.GetGlobalAddress(Res(p)),
+                ["DerefData"] = p => provider.DerefData(Res(p)),
                 ["GetIndirectAddressShort"] = p => new GetIndirectAddressShort().Transform(provider, Res(p)),
                 ["GetIndirectAddressShort2"] = p => new GetIndirectAddressShort2().Transform(provider, Res(p)),
                 ["GetIndirectAddressLong"] = p => new GetIndirectAddressLong().Transform(provider, Res(p)),
@@ -165,6 +166,10 @@ public class TransformProviderAMD64(nint baseAddress)
     /// <inheritdoc/>
     public nint GetDirectAddress(nint ptr)
         => BaseAddress + ptr;
+
+    /// <inheritdoc/>
+    public unsafe nint DerefData(nint ptr)
+        => *(nint*)ptr;
 }
 
 /// <inheritdoc/>
