@@ -1,5 +1,9 @@
 ﻿#nullable enable
 abstract riri.yamlscans.GetIndirectAddress.Amount.get -> int
+const riri.yamlscans.ScanModel.DisabledScanValue = "DISABLED" -> string!
+const riri.yamlscans.ScanModel.ResultSettingTag = "_RESULT" -> string!
+const riri.yamlscans.ScanModel.SignatureTag = "signatures" -> string!
+const riri.yamlscans.ScanModel.TransformTag = "transforms" -> string!
 override abstract riri.yamlscans.GetIndirectAddress.GetHashCode() -> int
 override riri.yamlscans.Candidate.ToString() -> string!
 override riri.yamlscans.CustomExpression.Equals(object? obj) -> bool

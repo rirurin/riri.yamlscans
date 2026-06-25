@@ -203,12 +203,18 @@ public class ScanModel(List<ScanEntry> entries)
 {
     /// <inheritdoc/>
     public List<ScanEntry> Entries { get; } = entries;
-    
-    private const string ResultSettingTag = "_RESULT";
-    private const string DisabledScanValue = "DISABLED";
 
-    private const string SignatureTag = "signatures";
-    private const string TransformTag = "transforms";
+    /// <inheritdoc/>
+    public const string ResultSettingTag = "_RESULT";
+
+    /// <inheritdoc/>
+    public const string DisabledScanValue = "DISABLED";
+
+    /// <inheritdoc/>
+    public const string SignatureTag = "signatures";
+
+    /// <inheritdoc/>
+    public const string TransformTag = "transforms";
 
     private static ITransform TransformFromString(string value)
     => value switch

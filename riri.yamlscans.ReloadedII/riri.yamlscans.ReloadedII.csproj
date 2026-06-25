@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>riri.yamlscans.RyoTuneReloaded</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Reloaded.SharedLib.Hooks" Version="1.9.0" />
+      <PackageReference Include="RyoTune.Reloaded" Version="4.2.1" />
+      <PackageReference Include="SharedScans.Interfaces" Version="1.2.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\riri.yamlscans\riri.yamlscans.csproj" />
+    </ItemGroup>
+
+</Project>

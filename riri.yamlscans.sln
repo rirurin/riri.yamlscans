@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "riri.yamlscans", "riri.yaml
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "riri.yamlscans.Tests", "riri.yamlscans.Tests\riri.yamlscans.Tests.csproj", "{99B2C046-D9C8-4A2E-899C-E6D605B5EC83}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "riri.yamlscans.ReloadedII", "riri.yamlscans.ReloadedII\riri.yamlscans.ReloadedII.csproj", "{48685917-A60D-487E-9015-D74216E22401}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{99B2C046-D9C8-4A2E-899C-E6D605B5EC83}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99B2C046-D9C8-4A2E-899C-E6D605B5EC83}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{99B2C046-D9C8-4A2E-899C-E6D605B5EC83}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48685917-A60D-487E-9015-D74216E22401}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48685917-A60D-487E-9015-D74216E22401}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48685917-A60D-487E-9015-D74216E22401}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48685917-A60D-487E-9015-D74216E22401}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

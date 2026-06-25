@@ -80,7 +80,7 @@ jobs:
       run: |
         if ([string]::IsNullOrEmpty("${{ steps.login.outputs.NUGET_API_KEY }}"))
         {
-            Write-Host "Could not retrieve the NuGuet key, skipping."
+            Write-Host "Could not retrieve the NuGet key, skipping."
             return
         }
         $items = Get-ChildItem -Path "${{ env.PUBLISH_PATH }}/Nuget/*.nupkg"
