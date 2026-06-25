@@ -25,3 +25,4 @@ New-Folder "$PublishPath/Github"
 New-Folder "$PublishPath/Nuget"
 
 Publish-Project riri.yamlscans
+Publish-Project riri.yamlscans.ReloadedII

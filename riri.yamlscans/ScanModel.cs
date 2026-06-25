@@ -1,32 +1,48 @@
 ﻿using NCalc;
+using NCalc.Handlers;
 using YamlDotNet.RepresentationModel;
 
 namespace riri.yamlscans;
 
-/// <inheritdoc/>
+/// <summary>
+/// Implemented by classes that represent some form of transformation on a target address.
+/// </summary>
 public interface ITransform
 {
-    /// <inheritdoc/>
+    /// <summary>
+    /// Performs the transformation on the pointer
+    /// </summary>
+    /// <param name="provider">A context object that defines platform-specific behaviors</param>
+    /// <param name="ptr">Pointer to transform</param>
+    /// <returns>The transformed address</returns>
     nint Transform(TransformProviderAMD64 provider, nint ptr);
 }
 
-// GetDirectAddressRelative
-/// <inheritdoc/>
+/// <summary>
+/// An address transform that adds the executable base address. 
+/// Useful in cases such as where a signature points directly to the start of the target function.
+/// </summary>
 public class GetDirectAddress : ITransform
 {
     /// <inheritdoc/>
     public nint Transform(TransformProviderAMD64 provider, nint ptr)
         => provider.TryDeref(provider.GetDirectAddress(ptr));
+
     /// <inheritdoc/>
     public override bool Equals(object? obj)
         => obj is GetDirectAddress;
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Hash code for GetDirectAddress
+    /// </summary>
+    /// <returns>Hash code for GetDirectAddress</returns>
     public override int GetHashCode()
         => 0.GetHashCode();
 }
 
-/// <inheritdoc/>
+/// <summary>
+/// Like GetDirectAddress but with the base address already added.
+/// </summary>
 public class GetDirectAddressAbsolute : ITransform
 {
     /// <inheritdoc/>
@@ -36,90 +52,118 @@ public class GetDirectAddressAbsolute : ITransform
     /// <inheritdoc/>
     public override bool Equals(object? obj)
         => obj is GetDirectAddressAbsolute;
-    /// <inheritdoc/>
+
+    /// <summary>
+    /// Hash code for GetDirectAddressAbsolute
+    /// </summary>
+    /// <returns>Hash code for GetDirectAddressAbsolute</returns>
     public override int GetHashCode()
         => 1.GetHashCode();
 }
 
-/// <inheritdoc/>
+/// <summary>
+/// A base class representing address transformations involving dereferencing an Int32 sized relative pointer encoded into the instruction.
+/// </summary>
 public abstract class GetIndirectAddress : ITransform
 {
-    /// <inheritdoc/>
+    /// <summary>
+    /// The number of bytes that the int32 pointer encoded into the instruction is offset by
+    /// </summary>
     protected abstract int Amount { get; }
+
     /// <inheritdoc/>
     public nint Transform(TransformProviderAMD64 provider, nint ptr)
         => provider.TryDeref(provider.GetGlobalAddress(provider.GetDirectAddress(ptr) + Amount));
+
     /// <inheritdoc/>
     public override bool Equals(object? obj)
         => obj != null && obj.GetType() == GetType();
+
     /// <inheritdoc/>
     public abstract override int GetHashCode();
 }
 
-/// <inheritdoc/>
+/// <summary>
+/// An address transformation that takes the current location + 1 and dereferences the Int32 relative pointer at that location to retrieve the target address.
+/// For example, a near jump/call instruction consist of an opcode byte (E9 and E8 respectively), followed by the relative pointer.
+/// </summary>
 public class GetIndirectAddressShort : GetIndirectAddress
 {
     /// <inheritdoc/>
     protected override int Amount => 1;
+
     /// <inheritdoc/>
     public override int GetHashCode()
         => 2.GetHashCode();
 }
 
-/// <inheritdoc/>
+/// <summary>
+/// An address transformation that takes the current location + 2 and deferences the Int32 relative pointer at that location to retrieve the target address.
+/// </summary>
 public class GetIndirectAddressShort2 : GetIndirectAddress
 {
     /// <inheritdoc/>
     protected override int Amount => 2;
+
     /// <inheritdoc/>
     public override int GetHashCode()
         => 3.GetHashCode();
 }
 
-/// <inheritdoc/>
+/// <summary>
+/// An address transformation that takes the current location + 3 and deferences the Int32 relative pointer at that location to retrieve the target address.
+/// </summary>
 public class GetIndirectAddressLong : GetIndirectAddress
 {
     /// <inheritdoc/>
     protected override int Amount => 3;
+
     /// <inheritdoc/>
     public override int GetHashCode()
         => 4.GetHashCode();
 }
 
-/// <inheritdoc/>
+/// <summary>
+/// An address transformation that takes the current location + 4 and deferences the Int32 relative pointer at that location to retrieve the target address.
+/// </summary>
 public class GetIndirectAddressLong4 : GetIndirectAddress
 {
     /// <inheritdoc/>
     protected override int Amount => 4;
+
     /// <inheritdoc/>
     public override int GetHashCode()
         => 5.GetHashCode();
 }
 
-/// <inheritdoc/>
+/// <summary>
+/// A custom address transformation that supports arithmetic functions and use of the other address transformers.
+/// </summary>
+/// <param name="expr">Value of the custom transform</param>
 public class CustomExpression(string expr) : ITransform
 {
     private string Expr { get; } = expr;
 
-    private static nint Res(ExpressionFunctionData p)
-        => (nint)p[0].Evaluate()!;
+    private static long Res(FunctionData p)
+        => (long)p.Evaluate(0)!;
 
     /// <inheritdoc/>
     public nint Transform(TransformProviderAMD64 provider, nint ptr)
-    => (nint?)new Expression(Expr)
+    => (nint)((long?)new Expression(Expr)
         {
-            Parameters = { ["result"] = ptr },
+            Parameters = { ["result"] = (long)ptr },
             Functions =
             {
-                ["GetDirectAddress"] = p => provider.GetDirectAddress(Res(p)),
-                ["GetGlobalAddress"] = p => provider.GetGlobalAddress(Res(p)),
-                ["DerefData"] = p => provider.DerefData(Res(p)),
-                ["GetIndirectAddressShort"] = p => new GetIndirectAddressShort().Transform(provider, Res(p)),
-                ["GetIndirectAddressShort2"] = p => new GetIndirectAddressShort2().Transform(provider, Res(p)),
-                ["GetIndirectAddressLong"] = p => new GetIndirectAddressLong().Transform(provider, Res(p)),
-                ["GetIndirectAddressLong4"] = p => new GetIndirectAddressLong4().Transform(provider, Res(p)),
+                ["GetDirectAddress"] = p => (long)provider.GetDirectAddress((nint)Res(p)),
+                ["GetGlobalAddress"] = p => (long)provider.GetGlobalAddress((nint)Res(p)),
+                ["DerefData"] = p => (long)provider.DerefData((nint)Res(p)),
+                ["TryDeref"] = p => (long)provider.TryDeref((nint)Res(p)),
+                ["GetIndirectAddressShort"] = p => (long)new GetIndirectAddressShort().Transform(provider, (nint)Res(p)),
+                ["GetIndirectAddressShort2"] = p => (long)new GetIndirectAddressShort2().Transform(provider, (nint)Res(p)),
+                ["GetIndirectAddressLong"] = p => (long)new GetIndirectAddressLong().Transform(provider, (nint)Res(p)),
+                ["GetIndirectAddressLong4"] = p => (long)new GetIndirectAddressLong4().Transform(provider, (nint)Res(p)),
             }
-        }.Evaluate() ?? throw new Exception("Error while trying to evaluate custom expression");
+        }.Evaluate() ?? throw new Exception("Error while trying to evaluate custom expression"));
 
     /// <inheritdoc/>
     public override bool Equals(object? obj)
@@ -130,7 +174,10 @@ public class CustomExpression(string expr) : ITransform
         => 6.GetHashCode();
 }
 
-/// <inheritdoc/>
+/// <summary>
+/// Transform provider for AMD64 (x86_64)
+/// </summary>
+/// <param name="baseAddress">The base address for the executable's main module</param>
 public class TransformProviderAMD64(nint baseAddress)
 {
     /// <inheritdoc/>
@@ -149,7 +196,11 @@ public class TransformProviderAMD64(nint baseAddress)
             _ => ptr
         };
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Tries to dereference the JMP instruction at the current address
+    /// </summary>
+    /// <param name="ptr">Current address</param>
+    /// <returns>Dereferenced value</returns>
     public unsafe nint TryDeref(nint ptr)
         => ((byte*)ptr)[0] switch
         {
@@ -159,25 +210,46 @@ public class TransformProviderAMD64(nint baseAddress)
             _ => ptr
         };
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Get the absolute address from a relative address pointer
+    /// </summary>
+    /// <param name="ptr"></param>
+    /// <returns></returns>
     public unsafe nint GetGlobalAddress(nint ptr)
         => *(int*)ptr + ptr + 4;
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Adds the base address of the executable's main module to an offset
+    /// </summary>
+    /// <param name="ptr">Address offset</param>
+    /// <returns>Absolute pointer</returns>
     public nint GetDirectAddress(nint ptr)
         => BaseAddress + ptr;
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Dereference a platform-size pointer. This is useful in cases such as entering a function from a VTable.
+    /// </summary>
+    /// <param name="ptr">Current address</param>
+    /// <returns>Derferenced address</returns>
     public unsafe nint DerefData(nint ptr)
         => *(nint*)ptr;
 }
 
-/// <inheritdoc/>
+/// <summary>
+/// Structure for a single signature candidate.
+/// </summary>
+/// <param name="signature">A sequence of bytes used as the search parameter to find a particular location in the executable.</param>
+/// <param name="transformer">The transform function to convert the found location into an appropriate format.</param>
 public class Candidate(string signature, ITransform transformer)
 {
-    /// <inheritdoc/>
+    /// <summary>
+    /// A sequence of bytes used as the search parameter to find a particular location in the executable.
+    /// </summary>
     public string Signature { get; } = signature;
-    /// <inheritdoc/>
+
+    /// <summary>
+    /// The transform function to convert the found location into an appropriate format.
+    /// </summary>
     public ITransform Transformer { get; set; } = transformer;
 
     /// <inheritdoc/>
@@ -185,12 +257,22 @@ public class Candidate(string signature, ITransform transformer)
         => $"(\"{Signature}\" => {Transformer.GetType().Name})";
 }
 
-/// <inheritdoc/>
+/// <summary>
+/// Represents a location in the executable to search for. This associates a key to identify the target location with a set of candidates.
+/// Multiple candidates are selected to accommodate for differences between different executable versions.
+/// </summary>
+/// <param name="key">Name of the location</param>
+/// <param name="candidates">List of candidates</param>
 public class ScanEntry(string key, List<Candidate> candidates)
 {
-    /// <inheritdoc/>
+    /// <summary>
+    /// Name of the location
+    /// </summary>
     public string Key { get; } = key;
-    /// <inheritdoc/>
+    
+    /// <summary>
+    /// List of candidates
+    /// </summary>
     public List<Candidate> Candidates { get; } = candidates;
 
     /// <inheritdoc/>
@@ -198,22 +280,35 @@ public class ScanEntry(string key, List<Candidate> candidates)
         => $"{Key} = [{string.Join(",", Candidates.Select(x => x.ToString()))}]";
 }
 
-/// <inheritdoc/>
+/// <summary>
+/// The structure used to store a successfully parsed YAML scan
+/// </summary>
+/// <param name="entries">A list of <see cref="ScanEntry"/></param>
 public class ScanModel(List<ScanEntry> entries)
 {
-    /// <inheritdoc/>
+    /// <summary>
+    /// A list of <see cref="ScanEntry"/>
+    /// </summary>
     public List<ScanEntry> Entries { get; } = entries;
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Name of the suffix attached to a function name to indicate that it represents the transformation for the given function
+    /// </summary>
     public const string ResultSettingTag = "_RESULT";
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Keyword to indicate that a function is not used
+    /// </summary>
     public const string DisabledScanValue = "DISABLED";
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// YAML key with an associated value containing for one or more signatures
+    /// </summary>
     public const string SignatureTag = "signatures";
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// YAML key with an associated value containing for one or more address transforms
+    /// </summary>
     public const string TransformTag = "transforms";
 
     private static ITransform TransformFromString(string value)
@@ -261,7 +356,12 @@ public class ScanModel(List<ScanEntry> entries)
         }   
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Constructs a ScanModel starting from the target YAML mapping node. This can be inside of a parent YAML document.
+    /// </summary>
+    /// <param name="root">Root YAML node to start parsing as a Scan YAML from.</param>
+    /// <returns>ScanModel</returns>
+    /// <exception cref="Exception">If parsing of the Scan YAML fails.</exception>
     public static ScanModel FromNode(YamlMappingNode root)
     {
         Dictionary<string, ScanEntry> scanEntries = new();
@@ -339,7 +439,12 @@ public class ScanModel(List<ScanEntry> entries)
         }
         return new ScanModel(scanEntries.Values.ToList());   
     }
-    /// <inheritdoc/>
+
+    /// <summary>
+    /// Constructs a ScanModel from a string
+    /// </summary>
+    /// <param name="yaml">String containing a YAML Scan</param>
+    /// <returns>ScanModel</returns>
     public static ScanModel FromString(string yaml)
     {
         var reader = new YamlStream();
@@ -348,13 +453,22 @@ public class ScanModel(List<ScanEntry> entries)
                    ?? throw new Exception("Expected a mapping at the top-level");
         return FromNode(root);
     }
-    /// <inheritdoc/>
+    
+    /// <summary>
+    /// Constructs a ScanModel from a file path
+    /// </summary>
+    /// <param name="path">Filename pointing to a YAML Scan</param>
+    /// <returns>ScanModel</returns>
     public static ScanModel FromPath(string path)
     {
         using var stream = new StreamReader(path);
         return FromString(stream.ReadToEnd());
     }
-    /// <inheritdoc/>
+    
+    /// <summary>
+    /// Converts a ScanModel into a Dictionary to quickly search for signatures by name
+    /// </summary>
+    /// <returns>ScanModel signatures as a dictionary</returns>
     public Dictionary<string, List<Candidate>> ToDictionary()
         => Entries.Select(x => (x.Key, x.Candidates)).ToDictionary();
 }

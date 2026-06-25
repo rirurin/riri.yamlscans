@@ -1,0 +1,13 @@
+﻿riri.yamlscans.ReloadedII.SHFunction2<TFunction>
+riri.yamlscans.ReloadedII.SHFunction2<TFunction>.Hook.get -> Reloaded.Hooks.Definitions.IHook<TFunction>?
+riri.yamlscans.ReloadedII.SHFunction2<TFunction>.SetHook(TFunction? hookFunction) -> void
+riri.yamlscans.ReloadedII.SHFunction2<TFunction>.SHFunction2() -> void
+riri.yamlscans.ReloadedII.SHFunction2<TFunction>.SHFunction2(TFunction hookFunction) -> void
+riri.yamlscans.ReloadedII.SHFunction2<TFunction>.Wrapper.get -> TFunction
+riri.yamlscans.ReloadedII.SignatureEntry
+riri.yamlscans.ReloadedII.SignatureEntry.Name.get -> string!
+riri.yamlscans.ReloadedII.SignatureEntry.SignatureEntry(string! name, System.Collections.Generic.List<riri.yamlscans.Candidate!>! candidates) -> void
+riri.yamlscans.ReloadedII.YamlScans
+static riri.yamlscans.ReloadedII.YamlScans.GetDependency<TDependency>() -> TDependency!
+static riri.yamlscans.ReloadedII.YamlScans.GetDependency<TDependency>(string! ModOwner) -> TDependency!
+static riri.yamlscans.ReloadedII.YamlScans.Initialize(Reloaded.Mod.Interfaces.IModConfig! _modConfig, Reloaded.Mod.Interfaces.IModLoader! _modLoader) -> void

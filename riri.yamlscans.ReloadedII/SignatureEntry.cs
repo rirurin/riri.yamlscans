@@ -2,8 +2,16 @@
 
 namespace riri.yamlscans.ReloadedII;
 
+/// <summary>
+/// Represents a function to signature mapping, where there are one or more signature candidates.
+/// </summary>
+/// <param name="name">Name of the function</param>
+/// <param name="candidates">List of candidates</param>
 public class SignatureEntry(string name, List<Candidate> candidates)
 {
+    /// <summary>
+    /// Name of the function
+    /// </summary>
     public string Name { get; internal set; } = name;
     private List<Candidate> Candidates { get; set; } = candidates;
     private readonly object Lock = new();
@@ -14,7 +22,7 @@ public class SignatureEntry(string name, List<Candidate> candidates)
 
     internal void CreateCandidateScan(Candidate candidate)
     {
-        YamlScans._startupScanner.AddMainModuleScan(candidate.Signature, result =>
+        YamlScans._startupScanner!.AddMainModuleScan(candidate.Signature, result =>
         {
             // Don't do anything if this SignatureEntry has been replaced
             if (!IsLatest)
@@ -27,15 +35,15 @@ public class SignatureEntry(string name, List<Candidate> candidates)
             {
                 if (Initialized)
                 {
-                    Log.Debug($"\"{name}\" was already found in a candidate pattern");
+                    Log.Debug($"\"{Name}\" was already found in a candidate pattern");
                 } 
                 else if (ScansCompleted == Candidates.Count)
                 {
-                    Log.Error($"Failed to find a pattern for {name}.");   
+                    Log.Error($"Failed to find a pattern for {Name}.");   
                 }
                 else
                 {
-                    Log.Debug($"Couldn't find location for {name} using pattern {candidate.Signature}, trying with another pattern...");
+                    Log.Debug($"Couldn't find location for {Name} using pattern {candidate.Signature}, trying with another pattern...");
                 }
                 return;
             }
@@ -45,18 +53,18 @@ public class SignatureEntry(string name, List<Candidate> candidates)
             {
                 if (!Initialized)
                 {
-                    Address = candidate.Transformer.Transform(YamlScans.TransformProvider, result.Offset);
+                    Address = candidate.Transformer.Transform(YamlScans.TransformProvider!, result.Offset);
                     Initialized = true;
                 }
             }
             if (Address != nint.Zero)
             {
-                Log.Debug($"\"{name}\" found at 0x{Address:x}");
-                YamlScans._sharedScans.Broadcast(name, Address);
+                Log.Debug($"\"{Name}\" found at 0x{Address:x}");
+                YamlScans._sharedScans!.Broadcast(Name, Address);
             }
             else
             {
-                Log.Debug($"\"{name}\" was already found in a candidate pattern");
+                Log.Debug($"\"{Name}\" was already found in a candidate pattern");
             }
         });
     }

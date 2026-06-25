@@ -2,6 +2,10 @@
 
 namespace riri.yamlscans.ReloadedII;
 
+/// <summary>
+/// Create a hook and/or wrapper from a YAML Scan result. Intended as a drop-in replacement for SHFunction from RyoTune.Reloaded
+/// </summary>
+/// <typeparam name="TFunction">Delegate type of the function. Also used as the name searched for in YAML Scans</typeparam>
 public class SHFunction2<TFunction>
 {
     private readonly string _Name;
@@ -38,11 +42,11 @@ public class SHFunction2<TFunction>
     public SHFunction2()
     {
         _Name = typeof(TFunction).Name;
-        YamlScans._sharedScans.AddScan(_Name, null);
-        YamlScans._sharedScans.CreateListener(_Name, result =>
+        YamlScans._sharedScans!.AddScan(_Name, null);
+        YamlScans._sharedScans!.CreateListener(_Name, result =>
         {
-            _Function = YamlScans._hooks.CreateFunction<TFunction>(result);
-            if (_HookFunction != null) Hook = _Function.Hook(_HookFunction).Activate();
+            _Function = YamlScans._hooks!.CreateFunction<TFunction>(result);
+            if (_HookFunction != null) Hook = _Function!.Hook(_HookFunction).Activate();
         });
     }
     

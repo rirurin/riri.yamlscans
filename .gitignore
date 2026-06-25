@@ -10,3 +10,5 @@ riderModule.iml
 **/.idea/*
 # Visual Studio
 **/.vs/*
+# Publish output
+Publish/*

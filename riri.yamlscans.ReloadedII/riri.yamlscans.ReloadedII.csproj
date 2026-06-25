@@ -4,10 +4,25 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>riri.yamlscans.RyoTuneReloaded</RootNamespace>
+        <RootNamespace>riri.yamlscans.ReloadedII</RootNamespace>
+
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+
+        <PackageId>riri.yamlscans.ReloadedII</PackageId>
+
+        <Version>1.0.0</Version>
+        <Authors>Rirurin</Authors>
+
+        <Description>An adapter for YAML Scans to interface with Reloaded-II mods</Description>
+        <PackageIconUrl>https://avatars1.githubusercontent.com/u/45473408</PackageIconUrl>
     </PropertyGroup>
 
     <ItemGroup>
+		<PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.3.4">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	    </PackageReference>
       <PackageReference Include="Reloaded.SharedLib.Hooks" Version="1.9.0" />
       <PackageReference Include="RyoTune.Reloaded" Version="4.2.1" />
       <PackageReference Include="SharedScans.Interfaces" Version="1.2.0" />
