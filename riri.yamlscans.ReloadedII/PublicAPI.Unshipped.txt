@@ -1,13 +1,24 @@
-﻿riri.yamlscans.ReloadedII.SHFunction2<TFunction>
+﻿override riri.yamlscans.ReloadedII.Ptr<T>.ToString() -> string!
+readonly riri.yamlscans.ReloadedII.Ptr<T>.Value -> T*
+riri.yamlscans.ReloadedII.Ptr<T>
+riri.yamlscans.ReloadedII.Ptr<T>.Equals(riri.yamlscans.ReloadedII.Ptr<T> other) -> bool
+riri.yamlscans.ReloadedII.Ptr<T>.Ptr() -> void
+riri.yamlscans.ReloadedII.Ptr<T>.Ptr(T* value) -> void
+riri.yamlscans.ReloadedII.SHFunction2<TFunction>
 riri.yamlscans.ReloadedII.SHFunction2<TFunction>.Hook.get -> Reloaded.Hooks.Definitions.IHook<TFunction>?
 riri.yamlscans.ReloadedII.SHFunction2<TFunction>.SetHook(TFunction? hookFunction) -> void
 riri.yamlscans.ReloadedII.SHFunction2<TFunction>.SHFunction2() -> void
 riri.yamlscans.ReloadedII.SHFunction2<TFunction>.SHFunction2(TFunction hookFunction) -> void
 riri.yamlscans.ReloadedII.SHFunction2<TFunction>.Wrapper.get -> TFunction
+riri.yamlscans.ReloadedII.SHStatic<TPointer>
+riri.yamlscans.ReloadedII.SHStatic<TPointer>.Instance.get -> TPointer*
+riri.yamlscans.ReloadedII.SHStatic<TPointer>.SHStatic(string! Name) -> void
 riri.yamlscans.ReloadedII.SignatureEntry
 riri.yamlscans.ReloadedII.SignatureEntry.Name.get -> string!
 riri.yamlscans.ReloadedII.SignatureEntry.SignatureEntry(string! name, System.Collections.Generic.List<riri.yamlscans.Candidate!>! candidates) -> void
 riri.yamlscans.ReloadedII.YamlScans
+static riri.yamlscans.ReloadedII.Ptr<T>.operator !=(riri.yamlscans.ReloadedII.Ptr<T> a, riri.yamlscans.ReloadedII.Ptr<T> b) -> bool
+static riri.yamlscans.ReloadedII.Ptr<T>.operator ==(riri.yamlscans.ReloadedII.Ptr<T> a, riri.yamlscans.ReloadedII.Ptr<T> b) -> bool
 static riri.yamlscans.ReloadedII.YamlScans.GetDependency<TDependency>() -> TDependency!
 static riri.yamlscans.ReloadedII.YamlScans.GetDependency<TDependency>(string! ModOwner) -> TDependency!
 static riri.yamlscans.ReloadedII.YamlScans.Initialize(Reloaded.Mod.Interfaces.IModConfig! _modConfig, Reloaded.Mod.Interfaces.IModLoader! _modLoader) -> void

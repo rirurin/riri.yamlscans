@@ -115,7 +115,10 @@ public Mod(ModContext context)
     YamlScans.Initialize(_modConfig, _modLoader);
     // ...
 }
+
 ```
+
+#### `SHFunction2<TFunction>`
 
 To add a function wrapper or hook that retrieves it's location from YAML Scans, declare a `SHFunction2<TFunction>`, with `TFunction` being the delegate for your function hook. This is designed as a drop-in replacement for `SHFunction`:
 
@@ -141,4 +144,33 @@ public Mod(ModContext context)
     _UAtlEvtSubsystem_DoesLevelStreamingLevelExist = new(UAtlEvtSubsystem_DoesLevelStreamingLevelExistImpl);
 }
 
+```
+
+#### `SHStatic<TPointer>`
+
+To add a pointer to static data within the executable, declare a `SHStatic<TPointer>`, where TPointer is the data type for the static data: 
+
+```c#
+private SHStatic<nint> _GEngine;
+
+public Mod(ModContext context)
+{
+    // ...
+    Project.Initialize(_modConfig, _modLoader, _logger, true);
+    Log.LogLevel = _configuration.LogLevel;
+    YamlScans.Initialize(_modConfig, _modLoader);
+    // ...
+    _GEngine = new("GEngine");
+}
+```
+
+To get the inner value, call, then dereference the `SHStatic<TPointer>.Instance` property (`_GEngine.Instance`).
+In some cases, the static data is itself a pointer to a heap allocation, which is common practice with singletons (in Unreal, GEngine is a `UEngine*`). In this case, the `Ptr<T>` type is provided:
+
+```c#
+private SHStatic<Ptr<UEngine>> _GEngine;
+
+// ... Do the same thing as shown above with initialization
+// To access the inner value:
+var GEngine = (*_GEngine.Instance).Value;
 ```

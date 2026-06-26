@@ -12,9 +12,6 @@ public class SHFunction2<TFunction>
     private IFunction<TFunction>? _Function;
     private TFunction? _HookFunction;
     
-    private readonly object Lock = new();
-    private int ScansCompleted;
-    
     /// <summary>
     /// <see cref="IReloadedHooks"/> instance, if a hook function was set.
     /// </summary>

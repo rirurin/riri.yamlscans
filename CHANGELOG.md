@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.0
+
+*Version numbers are now synchronised between `riri.yamlscans` and `riri.yamlscans.ReloadedII`*
+
+Added SHStatic wrapper for handling pointers to static data within the executable.
+
 ## 1.0.2
 
 For `riri.yamlscans v1.0.2` and `riri.yamlscans.ReloadedII v1.0.0` 
