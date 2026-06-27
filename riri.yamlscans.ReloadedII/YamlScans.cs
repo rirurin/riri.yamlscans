@@ -106,8 +106,12 @@ public static class YamlScans
     {
         scans = null;
         if (!Path.Exists(folder)) return false;
-        scans = Directory.EnumerateFiles(folder, "scans.yaml", SearchOption.TopDirectoryOnly)
-            .Select(ScanModel.FromPath).FirstOrDefault();
-        return true;
+        foreach (var scan in Directory.EnumerateFiles(folder, "scans.yaml", SearchOption.TopDirectoryOnly)
+                     .Select(ScanModel.FromPath))
+        {
+            scans = scan;
+            break;
+        }
+        return scans != null;
     }
 }
