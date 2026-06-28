@@ -42,7 +42,6 @@ public static class YamlScans
         _startupScanner = GetDependency<IStartupScanner>("Reloaded.Memory.SigScan.ReloadedII");
         
         YamlScans._modLoader.ModLoaded += OnModLoaded;
-        Log.Debug($"Initialized YAML Scans: Base Address is 0x{BaseAddress:x}");
     }
     
     private static TDependency GetDependencyInner<TDependency>(string Message) where TDependency: class
@@ -74,7 +73,7 @@ public static class YamlScans
 
     private static void OnModLoaded(IModV1 _mod, IModConfigV1 _modConfig)
     {
-        Log.Information($"OnModLoaded: {_modConfig.ModId}");
+        Log.Verbose($"OnModLoaded: {_modConfig.ModId}");
         if (_modConfig.ModId != _modId && !Project.IsModDependent(_modConfig)) return;
         LoadYamls((IModConfig)_modConfig);
     }
