@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.2
+Removed or set some debug logging to Verbose mode
+
 ## 1.1.1
 
 `riri.yamlscans.ReloadedII`:
