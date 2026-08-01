@@ -1,9 +1,26 @@
 ﻿override riri.yamlscans.ReloadedII.Ptr<T>.ToString() -> string!
 readonly riri.yamlscans.ReloadedII.Ptr<T>.Value -> T*
+riri.yamlscans.ReloadedII.IRegisterPreserveForCallingConvention
+riri.yamlscans.ReloadedII.IRegisterPreserveForCallingConvention.Preserve() -> string!
+riri.yamlscans.ReloadedII.IRegisterPreserveForCallingConvention.RegisterSize.get -> int
+riri.yamlscans.ReloadedII.IRegisterPreserveForCallingConvention.Retrieve() -> string!
 riri.yamlscans.ReloadedII.Ptr<T>
 riri.yamlscans.ReloadedII.Ptr<T>.Equals(riri.yamlscans.ReloadedII.Ptr<T> other) -> bool
 riri.yamlscans.ReloadedII.Ptr<T>.Ptr() -> void
 riri.yamlscans.ReloadedII.Ptr<T>.Ptr(T* value) -> void
+riri.yamlscans.ReloadedII.RegistersMicrosoftX64
+riri.yamlscans.ReloadedII.RegistersMicrosoftX64.RegisterSize.get -> int
+riri.yamlscans.ReloadedII.RegistersMicrosoftX64.RegistersMicrosoftX64() -> void
+riri.yamlscans.ReloadedII.SHAssemblyFunction
+riri.yamlscans.ReloadedII.SHAssemblyFunction.SHAssemblyFunction(string! Name, string![]! AssemblyCode) -> void
+riri.yamlscans.ReloadedII.SHAssemblyFunction.SHAssemblyFunction(string! Name, string![]! AssemblyCode, Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour HookBehavior = Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour.ExecuteFirst) -> void
+riri.yamlscans.ReloadedII.SHAssemblyFunction<TFunction>
+riri.yamlscans.ReloadedII.SHAssemblyFunction<TFunction>.SHAssemblyFunction(riri.yamlscans.ReloadedII.IRegisterPreserveForCallingConvention! PreserveRegisters, TFunction! HookFunction) -> void
+riri.yamlscans.ReloadedII.SHAssemblyFunction<TFunction>.SHAssemblyFunction(riri.yamlscans.ReloadedII.IRegisterPreserveForCallingConvention! PreserveRegisters, TFunction! HookFunction, Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour HookBehavior) -> void
+riri.yamlscans.ReloadedII.SHAssemblyFunction<TFunction>.SHAssemblyFunction(string![]! Prefix, TFunction! HookFunction, string![]! Postfix) -> void
+riri.yamlscans.ReloadedII.SHAssemblyFunction<TFunction>.SHAssemblyFunction(string![]! Prefix, TFunction! HookFunction, string![]! Postfix, Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour HookBehavior) -> void
+riri.yamlscans.ReloadedII.SHAssemblyFunction<TFunction>.SHAssemblyFunction(TFunction! HookFunction) -> void
+riri.yamlscans.ReloadedII.SHAssemblyFunction<TFunction>.SHAssemblyFunction(TFunction! HookFunction, Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour HookBehavior) -> void
 riri.yamlscans.ReloadedII.SHFunction2<TFunction>
 riri.yamlscans.ReloadedII.SHFunction2<TFunction>.Hook.get -> Reloaded.Hooks.Definitions.IHook<TFunction>?
 riri.yamlscans.ReloadedII.SHFunction2<TFunction>.SetHook(TFunction? hookFunction) -> void
@@ -22,3 +39,5 @@ static riri.yamlscans.ReloadedII.Ptr<T>.operator ==(riri.yamlscans.ReloadedII.Pt
 static riri.yamlscans.ReloadedII.YamlScans.GetDependency<TDependency>() -> TDependency!
 static riri.yamlscans.ReloadedII.YamlScans.GetDependency<TDependency>(string! ModOwner) -> TDependency!
 static riri.yamlscans.ReloadedII.YamlScans.Initialize(Reloaded.Mod.Interfaces.IModConfig! _modConfig, Reloaded.Mod.Interfaces.IModLoader! _modLoader) -> void
+virtual riri.yamlscans.ReloadedII.RegistersMicrosoftX64.Preserve() -> string!
+virtual riri.yamlscans.ReloadedII.RegistersMicrosoftX64.Retrieve() -> string!

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.0
+
+Added `SHAssembly` and `SHAssembly<TFunction>` for creating mid-function assembly hooks.
+
 ## 1.1.2
 Removed or set some debug logging to Verbose mode
 

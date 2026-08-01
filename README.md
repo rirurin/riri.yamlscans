@@ -174,3 +174,38 @@ private SHStatic<Ptr<UEngine>> _GEngine;
 // To access the inner value:
 var GEngine = (*_GEngine.Instance).Value;
 ```
+
+#### `SHAssemblyFunction` and `SHAssemblyFunction<TFunction>`
+
+To add a mid-function hook to call custom assembly instructions or a C# function, declare a `SHAssemblyFunction` for assembly or `SHAssemblyFunction<TFunction>` for a C# function. Like with `SHFunction2<TFunction>`, `TFunction` is the delegate type for your function hook.
+
+```c#
+[Function(FunctionAttribute.Register.rax, FunctionAttribute.Register.rax, false)]
+public delegate nint AFldDungeonAutoGenerateActor_DebugPrint(nint pOutput);
+public static nint AFldDungeonAutoGenerateActor_DebugPrintImpl(nint pOutput)
+{
+    Log.Debug(Marshal.PtrToStringUTF8(pOutput)!);
+    return pOutput;
+}
+
+public Mod(ModContext context)
+{
+    // ...
+    _AFldDungeonAutoGenerateActor_DebugPrint = new(AFldDungeonAutoGenerateActor_DebugPrintImpl);
+    // ...
+}
+```
+
+By default, the Microsoft X64 calling convention is used to preserve and save registers (rcx, rdx, r8 and r9) and the instructions in your assembly hook are executed before the original code:
+
+```c#
+public Mod(ModContext context)
+{
+    // ...
+    // The above declaration is equivalent to
+    _AFldDungeonAutoGenerateActor_DebugPrint = new(new RegistersMicrosoftX64(), AFldDungeonAutoGenerateActor_DebugPrintImpl);
+    // ...
+}
+```
+
+If your program does not use this calling convention, a custom one can be created by creating a class that inherits the IRegisterPreserveForCallingConvention interface.
