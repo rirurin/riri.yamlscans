@@ -12,7 +12,7 @@
 
         <PackageId>riri.yamlscans</PackageId>
 
-        <Version>1.2.0</Version>
+        <Version>1.2.1</Version>
         <Authors>Rirurin</Authors>
 
         <Description>A library for reading Scan YAML formatted files, intended for Reloaded-II mods</Description>

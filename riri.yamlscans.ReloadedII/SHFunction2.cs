@@ -21,22 +21,36 @@ public class SHFunction2<TFunction>
     /// Function wrapper for calling the native function.
     /// </summary>
     public TFunction Wrapper => _Function!.GetWrapper();
-    
+
     /// <summary>
     /// Creates a <see cref="SHFunction2{TFunction}"/> with both a function wrapper
     /// and function hook.
     /// </summary>
     /// <param name="hookFunction">Hook function.</param>
-    public SHFunction2(TFunction hookFunction) : this()
-    {
-        _HookFunction = hookFunction;
-    }
+    public SHFunction2(TFunction hookFunction) : this(hookFunction, null) {}
+
+    /// <summary>
+    /// Creates a <see cref="SHFunction2{TFunction}"/> with both a function wrapper
+    /// and function hook and additionally includes a callback triggered when a scan is found.
+    /// </summary>
+    /// <param name="hookFunction">Hook function.</param>
+    /// <param name="onScanFound">Callback called when a scan is found</param>
+    public SHFunction2(TFunction hookFunction, Action<nint>? onScanFound) : this(onScanFound)
+        => _HookFunction = hookFunction;
     
     /// <summary>
     /// Creates a <see cref="SHFunction2{TFunction}"/> with only a function wrapper,
     /// and the option to set a hook separately with <see cref="SetHook"/>.
     /// </summary>
-    public SHFunction2()
+    public SHFunction2() : this(null) {}
+
+    /// <summary>
+    /// Creates a <see cref="SHFunction2{TFunction}"/> with only a function wrapper,
+    /// and the option to set a hook separately with <see cref="SetHook"/>. Additionally, a callback can be
+    /// specified to execute when a scan is found.
+    /// </summary>
+    /// <param name="onScanFound"></param>
+    public SHFunction2(Action<nint>? onScanFound)
     {
         _Name = typeof(TFunction).Name;
         YamlScans._sharedScans!.AddScan(_Name, null);
@@ -44,6 +58,7 @@ public class SHFunction2<TFunction>
         {
             _Function = YamlScans._hooks!.CreateFunction<TFunction>(result);
             if (_HookFunction != null) Hook = _Function!.Hook(_HookFunction).Activate();
+            onScanFound?.Invoke(result);
         });
     }
     

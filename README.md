@@ -80,7 +80,7 @@ All of the functions below include an additional step of checking if the target 
 
 Custom address transforms are possible in cases where the defaults don't meet your needs. This leverages the [NCalc](https://github.com/ncalc/ncalc) expression evaluator to perform arithmetic and call certain functions. 
 
-As an example, `GetIndirectAddressShort` written as an expression is: `TryDeref(GetGlobalAddress(GetDirectAddress(result) + 1))`
+As an example, `GetIndirectAddressShort` written as an expression is: `TryDeref(GetGlobalAddress(GetDirectAddress(result) + 1))`. Note that since `result` is an offset relative to the base address, you'll need to call `GetDirectAddress(result)` to get the absolute address (the real address) for it.
 
 When writing expressions, the following input is available:
 
@@ -96,6 +96,8 @@ and the following functions are available:
 - `GetIndirectAddressShort2`: see above
 - `GetIndirectAddressLong`: see above
 - `GetIndirectAddressLong4`: see above
+- `DerefInt`: Deference an int-sized pointer relative to the base address of the executable module (`0x140000000` on MSVC without dynamic base). The result will be an integer, so use `GetDirectAddress` to get the real pointer
+- `GetAddressFromInt`: Equivalent to `GetDirectAddress(DerefInt(GetDirectAddress(result)))`
 
 ### Integrating with Reloaded-II
 
@@ -146,6 +148,16 @@ public Mod(ModContext context)
 
 ```
 
+You can optionally define a callback to execute if a scan is found for the function:
+
+```c#
+_CodeFunc_COMM = new(CodeFunc_COMMImpl, ptr =>
+{
+    Sections = (FlowscriptSection*)Utilities.GetGlobalAddress((int*)(ptr + 0x54 + 0x3));
+    // ...
+});
+```
+
 #### `SHStatic<TPointer>`
 
 To add a pointer to static data within the executable, declare a `SHStatic<TPointer>`, where TPointer is the data type for the static data: 
@@ -174,6 +186,21 @@ private SHStatic<Ptr<UEngine>> _GEngine;
 // To access the inner value:
 var GEngine = (*_GEngine.Instance).Value;
 ```
+
+A callback on a found scan is also available for `SHStatic<TPointer>`:
+
+```c#
+_MessageFunctionTable = new("MessageFunctionTable", _ =>
+{
+    var Sections = _MessageFunctionTable.Instance;
+    for (var SI = 0; SI < 8; SI++)
+    {
+        // ...
+    }
+});
+```
+
+The Instance pointer will already be set when the callback is called.
 
 #### `SHAssemblyFunction` and `SHAssemblyFunction<TFunction>`
 

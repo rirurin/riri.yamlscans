@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.1
+
+- Add `DerefInt` and `GetAddressFromInt` transformer methods for handling instructions that store int-sized pointers relative to the program's base address.
+- Added an optional `onScanFound` callback for `SHFunction2<TFunction>` and `SHStatic<TStatic>`
+
 ## 1.2.0
 
 Added `SHAssembly` and `SHAssembly<TFunction>` for creating mid-function assembly hooks.

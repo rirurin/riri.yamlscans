@@ -8,6 +8,8 @@ override abstract riri.yamlscans.GetIndirectAddress.GetHashCode() -> int
 override riri.yamlscans.Candidate.ToString() -> string!
 override riri.yamlscans.CustomExpression.Equals(object? obj) -> bool
 override riri.yamlscans.CustomExpression.GetHashCode() -> int
+override riri.yamlscans.GetAddressFromInt.Equals(object? obj) -> bool
+override riri.yamlscans.GetAddressFromInt.GetHashCode() -> int
 override riri.yamlscans.GetDirectAddress.Equals(object? obj) -> bool
 override riri.yamlscans.GetDirectAddress.GetHashCode() -> int
 override riri.yamlscans.GetDirectAddressAbsolute.Equals(object? obj) -> bool
@@ -31,6 +33,9 @@ riri.yamlscans.CustomExpression
 riri.yamlscans.CustomExpression.CustomExpression(string! expr) -> void
 riri.yamlscans.CustomExpression.Transform(riri.yamlscans.TransformProviderAMD64! provider, nint ptr) -> nint
 riri.yamlscans.Extensions
+riri.yamlscans.GetAddressFromInt
+riri.yamlscans.GetAddressFromInt.GetAddressFromInt() -> void
+riri.yamlscans.GetAddressFromInt.Transform(riri.yamlscans.TransformProviderAMD64! provider, nint ptr) -> nint
 riri.yamlscans.GetDirectAddress
 riri.yamlscans.GetDirectAddress.GetDirectAddress() -> void
 riri.yamlscans.GetDirectAddress.Transform(riri.yamlscans.TransformProviderAMD64! provider, nint ptr) -> nint
@@ -61,6 +66,7 @@ riri.yamlscans.ScanModel.ToDictionary() -> System.Collections.Generic.Dictionary
 riri.yamlscans.TransformProviderAMD64
 riri.yamlscans.TransformProviderAMD64.BaseAddress.get -> nint
 riri.yamlscans.TransformProviderAMD64.DerefData(nint ptr) -> nint
+riri.yamlscans.TransformProviderAMD64.DerefInt(nint ptr) -> int
 riri.yamlscans.TransformProviderAMD64.GetDirectAddress(nint ptr) -> nint
 riri.yamlscans.TransformProviderAMD64.GetGlobalAddress(nint ptr) -> nint
 riri.yamlscans.TransformProviderAMD64.TransformProviderAMD64(nint baseAddress) -> void

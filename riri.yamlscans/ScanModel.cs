@@ -137,6 +137,27 @@ public class GetIndirectAddressLong4 : GetIndirectAddress
 }
 
 /// <summary>
+/// Like GetDirectAddress but with the base address already added.
+/// </summary>
+public class GetAddressFromInt : ITransform
+{
+    /// <inheritdoc/>
+    public nint Transform(TransformProviderAMD64 provider, nint ptr)
+        => provider.GetDirectAddress(provider.DerefInt(provider.GetDirectAddress(ptr)));
+
+    /// <inheritdoc/>
+    public override bool Equals(object? obj)
+        => obj is GetAddressFromInt;
+
+    /// <summary>
+    /// Hash code for GetAddressFromInt
+    /// </summary>
+    /// <returns>Hash code for GetAddressFromInt</returns>
+    public override int GetHashCode()
+        => 6.GetHashCode();
+}
+
+/// <summary>
 /// A custom address transformation that supports arithmetic functions and use of the other address transformers.
 /// </summary>
 /// <param name="expr">Value of the custom transform</param>
@@ -156,8 +177,10 @@ public class CustomExpression(string expr) : ITransform
             {
                 ["GetDirectAddress"] = p => (long)provider.GetDirectAddress((nint)Res(p)),
                 ["GetGlobalAddress"] = p => (long)provider.GetGlobalAddress((nint)Res(p)),
-                ["DerefData"] = p => (long)provider.DerefData((nint)Res(p)),
                 ["TryDeref"] = p => (long)provider.TryDeref((nint)Res(p)),
+                ["DerefData"] = p => (long)provider.DerefData((nint)Res(p)),
+                ["DerefInt"] = p => (long)provider.DerefInt((nint)Res(p)),
+                ["GetAddressFromInt"] = p => (long)new GetAddressFromInt().Transform(provider, (nint)Res(p)),
                 ["GetIndirectAddressShort"] = p => (long)new GetIndirectAddressShort().Transform(provider, (nint)Res(p)),
                 ["GetIndirectAddressShort2"] = p => (long)new GetIndirectAddressShort2().Transform(provider, (nint)Res(p)),
                 ["GetIndirectAddressLong"] = p => (long)new GetIndirectAddressLong().Transform(provider, (nint)Res(p)),
@@ -233,6 +256,15 @@ public class TransformProviderAMD64(nint baseAddress)
     /// <returns>Derferenced address</returns>
     public unsafe nint DerefData(nint ptr)
         => *(nint*)ptr;
+
+    /// <summary>
+    /// Dereference an integer-size pointer. This is useful in cases where an instruction is storing a pointer relative
+    /// to the start of the program's memory map instead of relative to the next instruction's location.
+    /// </summary>
+    /// <param name="ptr"></param>
+    /// <returns></returns>
+    public unsafe int DerefInt(nint ptr)
+        => *(int*)ptr;
 }
 
 /// <summary>

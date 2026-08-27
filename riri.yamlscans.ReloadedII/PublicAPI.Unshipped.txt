@@ -25,11 +25,14 @@ riri.yamlscans.ReloadedII.SHFunction2<TFunction>
 riri.yamlscans.ReloadedII.SHFunction2<TFunction>.Hook.get -> Reloaded.Hooks.Definitions.IHook<TFunction>?
 riri.yamlscans.ReloadedII.SHFunction2<TFunction>.SetHook(TFunction? hookFunction) -> void
 riri.yamlscans.ReloadedII.SHFunction2<TFunction>.SHFunction2() -> void
+riri.yamlscans.ReloadedII.SHFunction2<TFunction>.SHFunction2(System.Action<nint>? onScanFound) -> void
 riri.yamlscans.ReloadedII.SHFunction2<TFunction>.SHFunction2(TFunction hookFunction) -> void
+riri.yamlscans.ReloadedII.SHFunction2<TFunction>.SHFunction2(TFunction hookFunction, System.Action<nint>? onScanFound) -> void
 riri.yamlscans.ReloadedII.SHFunction2<TFunction>.Wrapper.get -> TFunction
 riri.yamlscans.ReloadedII.SHStatic<TPointer>
 riri.yamlscans.ReloadedII.SHStatic<TPointer>.Instance.get -> TPointer*
 riri.yamlscans.ReloadedII.SHStatic<TPointer>.SHStatic(string! Name) -> void
+riri.yamlscans.ReloadedII.SHStatic<TPointer>.SHStatic(string! Name, System.Action<nint>? onScanFound) -> void
 riri.yamlscans.ReloadedII.SignatureEntry
 riri.yamlscans.ReloadedII.SignatureEntry.Name.get -> string!
 riri.yamlscans.ReloadedII.SignatureEntry.SignatureEntry(string! name, System.Collections.Generic.List<riri.yamlscans.Candidate!>! candidates) -> void

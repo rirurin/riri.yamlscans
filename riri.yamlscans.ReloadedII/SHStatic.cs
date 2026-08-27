@@ -18,10 +18,16 @@ public unsafe class SHStatic<TPointer> where TPointer: unmanaged
     /// Must be done before scanning has started, during normal mod initialization.
     /// </summary>
     /// <param name="Name">The name of the static data pointer. This must be specified</param>
-    public SHStatic(string Name)
+    public SHStatic(string Name) : this(Name, null) {}
+
+    public SHStatic(string Name, Action<nint>? onScanFound)
     {
         _Name = Name;
         YamlScans._sharedScans!.AddScan(_Name, null);
-        YamlScans._sharedScans!.CreateListener(_Name, result => Instance = (TPointer*)result);
+        YamlScans._sharedScans!.CreateListener(_Name, result =>
+        {
+            Instance = (TPointer*)result;
+            onScanFound?.Invoke(result);
+        });
     }
 }
