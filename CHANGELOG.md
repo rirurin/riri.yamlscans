@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.2
+
+- Fixed error when reading an empty YAML by returning a ScanModel with no entries instead
+
 ## 1.2.1
 
 - Add `DerefInt` and `GetAddressFromInt` transformer methods for handling instructions that store int-sized pointers relative to the program's base address.

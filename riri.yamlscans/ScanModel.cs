@@ -479,6 +479,7 @@ public class ScanModel(List<ScanEntry> entries)
     /// <returns>ScanModel</returns>
     public static ScanModel FromString(string yaml)
     {
+        if (string.IsNullOrEmpty(yaml)) return new ScanModel([]);
         var reader = new YamlStream();
         reader.Load(new StringReader(yaml));
         var root = reader.Documents[0].RootNode.Cast<YamlMappingNode>() 
