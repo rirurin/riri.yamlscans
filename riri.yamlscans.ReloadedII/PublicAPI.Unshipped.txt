@@ -12,22 +12,37 @@ riri.yamlscans.ReloadedII.RegistersMicrosoftX64
 riri.yamlscans.ReloadedII.RegistersMicrosoftX64.RegisterSize.get -> int
 riri.yamlscans.ReloadedII.RegistersMicrosoftX64.RegistersMicrosoftX64() -> void
 riri.yamlscans.ReloadedII.SHAssemblyFunction
+riri.yamlscans.ReloadedII.SHAssemblyFunction.Disable() -> void
+riri.yamlscans.ReloadedII.SHAssemblyFunction.Enable() -> void
+riri.yamlscans.ReloadedII.SHAssemblyFunction.IsHookEnabled.get -> bool
+riri.yamlscans.ReloadedII.SHAssemblyFunction.SetResult(nint value) -> void
 riri.yamlscans.ReloadedII.SHAssemblyFunction.SHAssemblyFunction(string! Name, string![]! AssemblyCode) -> void
 riri.yamlscans.ReloadedII.SHAssemblyFunction.SHAssemblyFunction(string! Name, string![]! AssemblyCode, Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour HookBehavior = Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour.ExecuteFirst) -> void
+riri.yamlscans.ReloadedII.SHAssemblyFunction.ToggleEnabled() -> bool
 riri.yamlscans.ReloadedII.SHAssemblyFunction<TFunction>
+riri.yamlscans.ReloadedII.SHAssemblyFunction<TFunction>.Disable() -> void
+riri.yamlscans.ReloadedII.SHAssemblyFunction<TFunction>.Enable() -> void
+riri.yamlscans.ReloadedII.SHAssemblyFunction<TFunction>.IsHookEnabled.get -> bool
+riri.yamlscans.ReloadedII.SHAssemblyFunction<TFunction>.SetResult(nint value) -> void
 riri.yamlscans.ReloadedII.SHAssemblyFunction<TFunction>.SHAssemblyFunction(riri.yamlscans.ReloadedII.IRegisterPreserveForCallingConvention! PreserveRegisters, TFunction! HookFunction) -> void
 riri.yamlscans.ReloadedII.SHAssemblyFunction<TFunction>.SHAssemblyFunction(riri.yamlscans.ReloadedII.IRegisterPreserveForCallingConvention! PreserveRegisters, TFunction! HookFunction, Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour HookBehavior) -> void
 riri.yamlscans.ReloadedII.SHAssemblyFunction<TFunction>.SHAssemblyFunction(string![]! Prefix, TFunction! HookFunction, string![]! Postfix) -> void
 riri.yamlscans.ReloadedII.SHAssemblyFunction<TFunction>.SHAssemblyFunction(string![]! Prefix, TFunction! HookFunction, string![]! Postfix, Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour HookBehavior) -> void
 riri.yamlscans.ReloadedII.SHAssemblyFunction<TFunction>.SHAssemblyFunction(TFunction! HookFunction) -> void
 riri.yamlscans.ReloadedII.SHAssemblyFunction<TFunction>.SHAssemblyFunction(TFunction! HookFunction, Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour HookBehavior) -> void
+riri.yamlscans.ReloadedII.SHAssemblyFunction<TFunction>.ToggleEnabled() -> bool
 riri.yamlscans.ReloadedII.SHFunction2<TFunction>
+riri.yamlscans.ReloadedII.SHFunction2<TFunction>.Disable() -> void
+riri.yamlscans.ReloadedII.SHFunction2<TFunction>.Enable() -> void
 riri.yamlscans.ReloadedII.SHFunction2<TFunction>.Hook.get -> Reloaded.Hooks.Definitions.IHook<TFunction>?
+riri.yamlscans.ReloadedII.SHFunction2<TFunction>.IsHookEnabled.get -> bool
 riri.yamlscans.ReloadedII.SHFunction2<TFunction>.SetHook(TFunction? hookFunction) -> void
+riri.yamlscans.ReloadedII.SHFunction2<TFunction>.SetResult(nint value) -> void
 riri.yamlscans.ReloadedII.SHFunction2<TFunction>.SHFunction2() -> void
 riri.yamlscans.ReloadedII.SHFunction2<TFunction>.SHFunction2(System.Action<nint>? onScanFound) -> void
 riri.yamlscans.ReloadedII.SHFunction2<TFunction>.SHFunction2(TFunction hookFunction) -> void
 riri.yamlscans.ReloadedII.SHFunction2<TFunction>.SHFunction2(TFunction hookFunction, System.Action<nint>? onScanFound) -> void
+riri.yamlscans.ReloadedII.SHFunction2<TFunction>.ToggleEnabled() -> bool
 riri.yamlscans.ReloadedII.SHFunction2<TFunction>.Wrapper.get -> TFunction
 riri.yamlscans.ReloadedII.SHStatic<TPointer>
 riri.yamlscans.ReloadedII.SHStatic<TPointer>.Instance.get -> TPointer*

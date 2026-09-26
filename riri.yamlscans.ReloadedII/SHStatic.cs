@@ -20,6 +20,12 @@ public unsafe class SHStatic<TPointer> where TPointer: unmanaged
     /// <param name="Name">The name of the static data pointer. This must be specified</param>
     public SHStatic(string Name) : this(Name, null) {}
 
+    /// <summary>
+    /// Creates a SHStatic.
+    /// Must be done before scanning has started, during normal mod initialization.
+    /// </summary>
+    /// <param name="Name">The name of the static data pointer. This must be specified</param>
+    /// <param name="onScanFound">A function to call when the function is found</param>
     public SHStatic(string Name, Action<nint>? onScanFound)
     {
         _Name = Name;

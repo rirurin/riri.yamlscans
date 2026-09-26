@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.3.0
+
+Added the following methods for `SHAssemblyFunction`, `SHAssemblyFunction<TFunction>` and `SHFunction2<TFunction>`:
+- `SetResult`: Sets the target address for the function wrapper/hook from code.
+- `IsHookEnabled`: Check if the function hook is enabled if there is one, otherwise it always returns false.
+- `ToggleEnabled`: Toggles the function hook between being enabled and disabled
+- `Disable`: Disables a function hook. The C#/Assembly code will not be called when the game calls the function.
+- `Enable`: Re-enables a function hook. The C#/Assembly code will be called again when the game calls the function.
+
 ## 1.2.2
 
 - Fixed error when reading an empty YAML by returning a ScanModel with no entries instead

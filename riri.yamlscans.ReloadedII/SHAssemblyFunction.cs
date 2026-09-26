@@ -31,8 +31,50 @@ public class SHAssemblyFunction
         YamlScans._sharedScans!.AddScan(_Name, null);
         YamlScans._sharedScans!.CreateListener(_Name, result =>
         {
+            if (_AssemblyHook != null) return;
             _AssemblyHook = YamlScans._hooks!.CreateAsmHook(AssemblyCode, result, HookBehavior).Activate();
         });
+    }
+    
+    /// <summary>
+    /// Programmatically set the address for the function, instead of retrieving the result from Scans YAML.
+    /// </summary>
+    /// <param name="value">Address pointing to the start of the function.</param>
+    public void SetResult(nint value) => YamlScans._sharedScans!.Broadcast(_Name, value);
+    
+    /// <summary>
+    /// Check if the function hook is enabled. If there is no function hook, this will always be false.
+    /// </summary>
+    public bool IsHookEnabled => _AssemblyHook?.IsEnabled ?? false;
+    
+    /// <summary>
+    /// Toggles the function hook between enabled and disabled.
+    /// </summary>
+    /// <returns>The new enable state for the function hook.</returns>
+    public bool ToggleEnabled()
+    {
+        if (_AssemblyHook == null) return false;
+        if (_AssemblyHook.IsEnabled) _AssemblyHook.Disable();
+        else _AssemblyHook.Enable();
+        return _AssemblyHook.IsEnabled;
+    }
+
+    /// <summary>
+    /// If a hook exists for this function, disables the function hook. This is useful in cases where you want to
+    /// unload a portion of your mod's functionality.
+    /// </summary>
+    public void Disable()
+    {
+        if (_AssemblyHook is { IsEnabled: true }) _AssemblyHook.Disable();
+    }
+    
+    /// <summary>
+    /// If it exists, enables the function hook if it's been disabled. This is useful when you want to re-enable
+    /// a disabled function hook.
+    /// </summary>
+    public void Enable()
+    {
+        if (_AssemblyHook is { IsEnabled: false }) _AssemblyHook.Enable();
     }
 }
 
@@ -152,10 +194,52 @@ public class SHAssemblyFunction<TFunction> where TFunction: Delegate
         YamlScans._sharedScans!.AddScan(_Name, null);
         YamlScans._sharedScans!.CreateListener(_Name, result =>
         {
+            if (_AssemblyHook != null) return;
             var Code = Prefix.ToList();
             Code.Add(YamlScans._hooks!.Utilities.GetAbsoluteCallMnemonics(_HookFunction, out _ReverseWrapper));
             Code.AddRange(Postfix);
             _AssemblyHook = YamlScans._hooks!.CreateAsmHook(Code.ToArray(), result, HookBehavior).Activate();
         });
+    }
+    
+    /// <summary>
+    /// Programmatically set the address for the function, instead of retrieving the result from Scans YAML.
+    /// </summary>
+    /// <param name="value">Address pointing to the start of the function.</param>
+    public void SetResult(nint value) => YamlScans._sharedScans!.Broadcast(_Name, value);
+    
+    /// <summary>
+    /// Check if the function hook is enabled. If there is no function hook, this will always be false.
+    /// </summary>
+    public bool IsHookEnabled => _AssemblyHook?.IsEnabled ?? false;
+    
+    /// <summary>
+    /// Toggles the function hook between enabled and disabled.
+    /// </summary>
+    /// <returns>The new enable state for the function hook.</returns>
+    public bool ToggleEnabled()
+    {
+        if (_AssemblyHook == null) return false;
+        if (_AssemblyHook.IsEnabled) _AssemblyHook.Disable();
+        else _AssemblyHook.Enable();
+        return _AssemblyHook.IsEnabled;
+    }
+    
+    /// <summary>
+    /// If a hook exists for this function, disables the function hook. This is useful in cases where you want to
+    /// unload a portion of your mod's functionality.
+    /// </summary>
+    public void Disable()
+    {
+        if (_AssemblyHook is { IsEnabled: true }) _AssemblyHook.Disable();
+    }
+    
+    /// <summary>
+    /// If it exists, enables the function hook if it's been disabled. This is useful when you want to re-enable
+    /// a disabled function hook.
+    /// </summary>
+    public void Enable()
+    {
+        if (_AssemblyHook is { IsEnabled: false }) _AssemblyHook.Enable();
     }
 }

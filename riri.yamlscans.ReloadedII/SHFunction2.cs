@@ -56,6 +56,7 @@ public class SHFunction2<TFunction>
         YamlScans._sharedScans!.AddScan(_Name, null);
         YamlScans._sharedScans!.CreateListener(_Name, result =>
         {
+            if (_Function != null) return; // Don't call this more than once
             _Function = YamlScans._hooks!.CreateFunction<TFunction>(result);
             if (_HookFunction != null) Hook = _Function!.Hook(_HookFunction).Activate();
             onScanFound?.Invoke(result);
@@ -68,4 +69,45 @@ public class SHFunction2<TFunction>
     /// </summary>
     /// <param name="hookFunction">The hook function. If <c>null</c>, no hook will be created.</param>
     public void SetHook(TFunction? hookFunction) => _HookFunction = hookFunction;
+
+    /// <summary>
+    /// Programmatically set the address for the function, instead of retrieving the result from Scans YAML.
+    /// </summary>
+    /// <param name="value">Address pointing to the start of the function.</param>
+    public void SetResult(nint value) => YamlScans._sharedScans!.Broadcast(_Name, value);
+
+    /// <summary>
+    /// Check if the function hook is enabled. If there is no function hook, this will always be false.
+    /// </summary>
+    public bool IsHookEnabled => Hook?.IsHookEnabled ?? false;
+    
+    /// <summary>
+    /// Toggles the function hook between enabled and disabled.
+    /// </summary>
+    /// <returns>The new enable state for the function hook.</returns>
+    public bool ToggleEnabled()
+    {
+        if (Hook == null) return false;
+        if (Hook.IsHookEnabled) Hook.Disable();
+        else Hook.Enable();
+        return Hook.IsHookEnabled;
+    }
+    
+    /// <summary>
+    /// If a hook exists for this function, disables the function hook. This is useful in cases where you want to
+    /// unload a portion of your mod's functionality.
+    /// </summary>
+    public void Disable()
+    {
+        if (Hook is { IsHookEnabled: true }) Hook.Disable();
+    }
+
+    /// <summary>
+    /// If it exists, enables the function hook if it's been disabled. This is useful when you want to re-enable
+    /// a disabled function hook.
+    /// </summary>
+    public void Enable()
+    {
+        if (Hook is { IsHookEnabled: false }) Hook.Enable();
+    }
 }

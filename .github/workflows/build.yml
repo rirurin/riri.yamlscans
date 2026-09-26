@@ -41,6 +41,10 @@ jobs:
       with:
         dotnet-version: 9.0.x
 
+    - name: Unit Tests
+      run: |
+        dotnet test riri.yamlscans
+
     - name: Build
       run: ./Build.ps1 -PublishPath ${{ env.PUBLISH_PATH }}
     
